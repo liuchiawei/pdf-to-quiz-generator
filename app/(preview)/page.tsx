@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { experimental_useObject } from "ai/react";
+import { useState, useEffect } from "react";
+import { experimental_useObject as useObject } from "@ai-sdk/react";
 import { questionsSchema } from "@/lib/schemas";
 import { z } from "zod";
 import { toast } from "sonner";
-import { FileUp, Plus, Loader2 } from "lucide-react";
+import { FileUp, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,10 +18,10 @@ import {
 import { Progress } from "@/components/ui/progress";
 import Quiz from "@/components/quiz";
 import { Link } from "@/components/ui/link";
-import NextLink from "next/link";
 import { generateQuizTitle } from "./actions";
 import { AnimatePresence, motion } from "framer-motion";
-import { VercelIcon, GitIcon } from "@/components/icons";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function ChatWithFiles() {
   const [files, setFiles] = useState<File[]>([]);
@@ -30,12 +30,18 @@ export default function ChatWithFiles() {
   );
   const [isDragging, setIsDragging] = useState(false);
   const [title, setTitle] = useState<string>();
+  const [questionsLength, setQuestionsLength] = useState<number>(4);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const {
     submit,
     object: partialQuestions,
     isLoading,
-  } = experimental_useObject({
+  } = useObject({
     api: "/api/generate-quiz",
     schema: questionsSchema,
     initialValue: undefined,
@@ -89,7 +95,7 @@ export default function ChatWithFiles() {
         data: await encodeFileAsBase64(file),
       })),
     );
-    submit({ files: encodedFiles });
+    submit({ files: encodedFiles, questionsLength });
     const generatedTitle = await generateQuizTitle(encodedFiles[0].name);
     setTitle(generatedTitle);
   };
@@ -98,18 +104,25 @@ export default function ChatWithFiles() {
     setFiles([]);
     setQuestions([]);
   };
+  
+  // クイズの進行度を計算する
+  const progress = partialQuestions ? (partialQuestions.length / questionsLength) * 100 : 0;
 
-  const progress = partialQuestions ? (partialQuestions.length / 4) * 100 : 0;
+  // 生成問題数チェック
+  const isQuestionsComplete = (partial: typeof partialQuestions): partial is z.infer<typeof questionsSchema> => {
+    return partial !== undefined && 
+           partial.length === questionsLength && 
+           partial.every(q => q && q.question && q.options && q.answer);
+  };
 
-  if (questions.length === 4) {
-    return (
-      <Quiz title={title ?? "Quiz"} questions={questions} clearPDF={clearPDF} />
-    );
+  // 問題数がユーザー選んだ数になったらクイズを表示
+  if (isQuestionsComplete(partialQuestions)) {
+    return <Quiz title={title ?? "Quiz"} questions={partialQuestions} clearPDF={clearPDF} />;
   }
 
   return (
     <div
-      className="min-h-[100dvh] w-full flex justify-center"
+      className="h-full min-h-screen w-full flex justify-center items-center"
       onDragOver={(e) => {
         e.preventDefault();
         setIsDragging(true);
@@ -147,10 +160,6 @@ export default function ChatWithFiles() {
             <div className="rounded-full bg-primary/10 p-2">
               <FileUp className="h-6 w-6" />
             </div>
-            <Plus className="h-4 w-4" />
-            <div className="rounded-full bg-primary/10 p-2">
-              <Loader2 className="h-6 w-6" />
-            </div>
           </div>
           <div className="space-y-2">
             <CardTitle className="text-2xl font-bold">
@@ -158,9 +167,9 @@ export default function ChatWithFiles() {
             </CardTitle>
             <CardDescription className="text-base">
               Upload a PDF to generate an interactive quiz based on its content
-              using the <Link href="https://sdk.vercel.ai">AI SDK</Link> and{" "}
+              using the <Link href="https://sdk.vercel.ai">Vercel AI SDK</Link> and{" "}
               <Link href="https://sdk.vercel.ai/providers/ai-sdk-providers/google-generative-ai">
-                Google&apos;s Gemini Pro
+                Claude 4 Sonnet
               </Link>
               .
             </CardDescription>
@@ -189,6 +198,33 @@ export default function ChatWithFiles() {
                 )}
               </p>
             </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="questions-length">問題數量</Label>
+              {mounted ? (
+                <Select 
+                  value={questionsLength.toString()} 
+                  onValueChange={(value: string) => setQuestionsLength(parseInt(value))}
+                >
+                  <SelectTrigger id="questions-length">
+                    <SelectValue placeholder="選擇問題數量" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="3">3 題</SelectItem>
+                    <SelectItem value="4">4 題</SelectItem>
+                    <SelectItem value="5">5 題</SelectItem>
+                    <SelectItem value="6">6 題</SelectItem>
+                    <SelectItem value="8">8 題</SelectItem>
+                    <SelectItem value="10">10 題</SelectItem>
+                  </SelectContent>
+                </Select>
+              ) : (
+                <div className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm">
+                  {questionsLength} 題
+                </div>
+              )}
+            </div>
+
             <Button
               type="submit"
               className="w-full"
@@ -223,7 +259,7 @@ export default function ChatWithFiles() {
                 />
                 <span className="text-muted-foreground text-center col-span-4 sm:col-span-2">
                   {partialQuestions
-                    ? `Generating question ${partialQuestions.length + 1} of 4`
+                    ? `Generating question ${partialQuestions.length + 1} of ${questionsLength}`
                     : "Analyzing PDF content"}
                 </span>
               </div>
@@ -231,29 +267,6 @@ export default function ChatWithFiles() {
           </CardFooter>
         )}
       </Card>
-      <motion.div
-        className="flex flex-row gap-4 items-center justify-between fixed bottom-6 text-xs "
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-      >
-        <NextLink
-          target="_blank"
-          href="https://github.com/vercel-labs/ai-sdk-preview-pdf-support"
-          className="flex flex-row gap-2 items-center border px-2 py-1.5 rounded-md hover:bg-zinc-100 dark:border-zinc-800 dark:hover:bg-zinc-800"
-        >
-          <GitIcon />
-          View Source Code
-        </NextLink>
-
-        <NextLink
-          target="_blank"
-          href="https://vercel.com/templates/next.js/ai-quiz-generator"
-          className="flex flex-row gap-2 items-center bg-zinc-900 px-2 py-1.5 rounded-md text-zinc-50 hover:bg-zinc-950 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-50"
-        >
-          <VercelIcon size={14} />
-          Deploy with Vercel
-        </NextLink>
-      </motion.div>
     </div>
   );
 }

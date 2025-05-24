@@ -4,6 +4,7 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { generateObject } from "ai";
 import { z } from "zod";
 
+// 問題集タイトル生成関数
 export const generateQuizTitle = async (file: string) => {
   const result = await generateObject({
     model: anthropic("claude-4-sonnet-20250514"),
@@ -11,7 +12,7 @@ export const generateQuizTitle = async (file: string) => {
       title: z
         .string()
         .describe(
-          "A max three word title for the quiz based on the file provided as context"
+          "A max three word title for the quiz based on the file provided as context, and the language of the file"
         ),
     }),
     prompt:

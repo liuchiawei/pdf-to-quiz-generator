@@ -3,9 +3,9 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { streamObject } from "ai";
 
 export const maxDuration = 60;
-
+// ユーザーが選んだ問題数でクイズを生成する
 export async function POST(req: Request) {
-  const { files } = await req.json();
+  const { files, questionsLength = 4 } = await req.json();
   const firstFile = files[0].data;
 
   const result = streamObject({
@@ -13,8 +13,7 @@ export async function POST(req: Request) {
     messages: [
       {
         role: "system",
-        content:
-          "You are a teacher. Your job is to take a document, and create a multiple choice test (with 4 questions) based on the content of the document. Each option should be roughly equal in length.",
+        content: `You are a teacher. Your job is to take a document, and create a multiple choice test (with ${questionsLength} questions) based on the content of the document. Each option should be roughly equal in length. Respond to the language of the document.`,
       },
       {
         role: "user",
