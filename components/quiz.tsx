@@ -24,9 +24,10 @@ const QuestionCard: React.FC<{
   question: Question;
   selectedAnswer: string | null;
   onSelectAnswer: (answer: string) => void;
+  handleNextQuestion: () => void;
   isSubmitted: boolean;
   showCorrectAnswer: boolean;
-}> = ({ question, selectedAnswer, onSelectAnswer, showCorrectAnswer }) => {
+}> = ({ question, selectedAnswer, onSelectAnswer, handleNextQuestion, showCorrectAnswer }) => {
   const answerLabels = ["A", "B", "C", "D"];
 
   return (
@@ -35,13 +36,13 @@ const QuestionCard: React.FC<{
         {question.question}
       </h2>
       <div className="grid grid-cols-1 gap-4">
-        {question.options.map((option, index) => (
+        {question.options.map((option: string, index: number) => (
           <Button
             key={index}
             variant={
               selectedAnswer === answerLabels[index] ? "secondary" : "outline"
             }
-            className={`h-auto py-6 px-4 justify-start text-left whitespace-normal ${
+            className={`h-auto py-6 px-4 justify-start text-left whitespace-normal cursor-pointer ${
               showCorrectAnswer && answerLabels[index] === question.answer
                 ? "bg-green-600 hover:bg-green-700"
                 : showCorrectAnswer &&
@@ -50,12 +51,15 @@ const QuestionCard: React.FC<{
                   ? "bg-red-600 hover:bg-red-700"
                   : ""
             }`}
-            onClick={() => onSelectAnswer(answerLabels[index])}
+            onClick={() => {
+              onSelectAnswer(answerLabels[index])
+              handleNextQuestion()
+            }}
           >
             <span className="text-lg font-medium mr-4 shrink-0">
               {answerLabels[index]}
             </span>
-            <span className="flex-grow">{option}</span>
+            <span className="grow">{option}</span>
             {(showCorrectAnswer && answerLabels[index] === question.answer) ||
               (selectedAnswer === answerLabels[index] && (
                 <Check className="ml-2 shrink-0 text-white" size={20} />
@@ -157,6 +161,7 @@ export default function Quiz({
                       question={currentQuestion}
                       selectedAnswer={answers[currentQuestionIndex]}
                       onSelectAnswer={handleSelectAnswer}
+                      handleNextQuestion={handleNextQuestion}
                       isSubmitted={isSubmitted}
                       showCorrectAnswer={false}
                     />
@@ -198,10 +203,13 @@ export default function Quiz({
                         variant="outline"
                         className="bg-muted hover:bg-muted/80 w-full"
                       >
-                        <RefreshCw className="mr-2 h-4 w-4" /> Reset Quiz
+                        <RefreshCw className="mr-2 h-4 w-4" /> Restart Quiz
                       </Button>
                       <Button
-                        onClick={clearPDF}
+                        onClick={() => {
+                          clearPDF()
+                          window.location.reload()
+                        }}
                         className="bg-primary hover:bg-primary/90 w-full"
                       >
                         <FileText className="mr-2 h-4 w-4" /> Try Another PDF
