@@ -172,6 +172,7 @@ export default function ChatWithFiles() {
               className={`relative flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 transition-colors hover:border-muted-foreground/50`}
             >
               <input
+                title="Upload PDF"
                 type="file"
                 onChange={handleFileChange}
                 accept="application/pdf"

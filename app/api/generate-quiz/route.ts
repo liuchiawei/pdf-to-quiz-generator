@@ -1,5 +1,5 @@
 import { questionSchema, questionsSchema } from "@/lib/schemas";
-import { google } from "@ai-sdk/google";
+import { anthropic } from "@ai-sdk/anthropic";
 import { streamObject } from "ai";
 
 export const maxDuration = 60;
@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   const firstFile = files[0].data;
 
   const result = streamObject({
-    model: google("gemini-1.5-pro-latest"),
+    model: anthropic("claude-4-sonnet-20250514"),
     messages: [
       {
         role: "system",
