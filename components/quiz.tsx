@@ -36,13 +36,13 @@ const QuestionCard: React.FC<{
         {question.question}
       </h2>
       <div className="grid grid-cols-1 gap-4">
-        {question.options.map((option, index) => (
+        {question.options.map((option: string, index: number) => (
           <Button
             key={index}
             variant={
               selectedAnswer === answerLabels[index] ? "secondary" : "outline"
             }
-            className={`h-auto py-6 px-4 justify-start text-left whitespace-normal ${
+            className={`h-auto py-6 px-4 justify-start text-left whitespace-normal cursor-pointer ${
               showCorrectAnswer && answerLabels[index] === question.answer
                 ? "bg-green-600 hover:bg-green-700"
                 : showCorrectAnswer &&
