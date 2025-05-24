@@ -206,7 +206,10 @@ export default function Quiz({
                         <RefreshCw className="mr-2 h-4 w-4" /> Reset Quiz
                       </Button>
                       <Button
-                        onClick={clearPDF}
+                        onClick={() => {
+                          clearPDF()
+                          window.location.reload()
+                        }}
                         className="bg-primary hover:bg-primary/90 w-full"
                       >
                         <FileText className="mr-2 h-4 w-4" /> Try Another PDF
