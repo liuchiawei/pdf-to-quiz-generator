@@ -25,9 +25,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export default function ChatWithFiles() {
   const [files, setFiles] = useState<File[]>([]);
-  const [questions, setQuestions] = useState<z.infer<typeof questionsSchema>>(
-    [],
-  );
   const [isDragging, setIsDragging] = useState(false);
   const [title, setTitle] = useState<string>();
   const [questionsLength, setQuestionsLength] = useState<number>(4);
@@ -48,9 +45,6 @@ export default function ChatWithFiles() {
     onError: (error) => {
       toast.error("Failed to generate quiz. Please try again.");
       setFiles([]);
-    },
-    onFinish: ({ object }) => {
-      setQuestions(object ?? []);
     },
   });
 
@@ -102,7 +96,6 @@ export default function ChatWithFiles() {
 
   const clearPDF = () => {
     setFiles([]);
-    setQuestions([]);
   };
   
   // クイズの進行度を計算する
@@ -227,7 +220,7 @@ export default function ChatWithFiles() {
 
             <Button
               type="submit"
-              className="w-full"
+              className={`w-full ${mounted && isLoading ? "animate-pulse" : ""}`}
               disabled={files.length === 0}
             >
               {isLoading ? (
