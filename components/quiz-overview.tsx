@@ -40,7 +40,7 @@ export default function QuizReview({ questions, userAnswers }: QuizReviewProps) 
                       }`}
                     >
                       <span className="text-lg font-medium mr-4 w-6">{currentLabel}</span>
-                      <span className="flex-grow">{option}</span>
+                      <span className="grow">{option}</span>
                       {isCorrect && (
                         <Check className="ml-2 text-green-600 dark:text-green-400" size={20} />
                       )}
