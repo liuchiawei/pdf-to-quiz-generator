@@ -24,9 +24,10 @@ const QuestionCard: React.FC<{
   question: Question;
   selectedAnswer: string | null;
   onSelectAnswer: (answer: string) => void;
+  handleNextQuestion: () => void;
   isSubmitted: boolean;
   showCorrectAnswer: boolean;
-}> = ({ question, selectedAnswer, onSelectAnswer, showCorrectAnswer }) => {
+}> = ({ question, selectedAnswer, onSelectAnswer, handleNextQuestion, showCorrectAnswer }) => {
   const answerLabels = ["A", "B", "C", "D"];
 
   return (
@@ -39,7 +40,7 @@ const QuestionCard: React.FC<{
           <Button
             key={index}
             variant={
-              selectedAnswer === answerLabels[index] ? "secondary" : "outline-solid"
+              selectedAnswer === answerLabels[index] ? "secondary" : "outline"
             }
             className={`h-auto py-6 px-4 justify-start text-left whitespace-normal ${
               showCorrectAnswer && answerLabels[index] === question.answer
@@ -50,7 +51,10 @@ const QuestionCard: React.FC<{
                   ? "bg-red-600 hover:bg-red-700"
                   : ""
             }`}
-            onClick={() => onSelectAnswer(answerLabels[index])}
+            onClick={() => {
+              onSelectAnswer(answerLabels[index])
+              handleNextQuestion()
+            }}
           >
             <span className="text-lg font-medium mr-4 shrink-0">
               {answerLabels[index]}
@@ -157,6 +161,7 @@ export default function Quiz({
                       question={currentQuestion}
                       selectedAnswer={answers[currentQuestionIndex]}
                       onSelectAnswer={handleSelectAnswer}
+                      handleNextQuestion={handleNextQuestion}
                       isSubmitted={isSubmitted}
                       showCorrectAnswer={false}
                     />
