@@ -200,20 +200,20 @@ export default function ChatWithFiles() {
                   onValueChange={(value: string) => setQuestionsLength(parseInt(value))}
                 >
                   <SelectTrigger id="questions-length">
-                    <SelectValue placeholder="選擇問題數量" />
+                    <SelectValue placeholder="問題数を選択" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="3">3 題</SelectItem>
-                    <SelectItem value="4">4 題</SelectItem>
-                    <SelectItem value="5">5 題</SelectItem>
-                    <SelectItem value="6">6 題</SelectItem>
-                    <SelectItem value="8">8 題</SelectItem>
-                    <SelectItem value="10">10 題</SelectItem>
+                    <SelectItem value="3">3 問</SelectItem>
+                    <SelectItem value="4">4 問</SelectItem>
+                    <SelectItem value="5">5 問</SelectItem>
+                    <SelectItem value="6">6 問</SelectItem>
+                    <SelectItem value="8">8 問</SelectItem>
+                    <SelectItem value="10">10 問</SelectItem>
                   </SelectContent>
                 </Select>
               ) : (
                 <div className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm">
-                  {questionsLength} 題
+                  {questionsLength} 問
                 </div>
               )}
             </div>
