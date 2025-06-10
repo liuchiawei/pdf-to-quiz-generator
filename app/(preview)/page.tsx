@@ -193,7 +193,7 @@ export default function ChatWithFiles() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="questions-length">問題數量</Label>
+              <Label htmlFor="questions-length">問題数</Label>
               {mounted ? (
                 <Select 
                   value={questionsLength.toString()} 
