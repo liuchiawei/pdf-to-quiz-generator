@@ -44,7 +44,7 @@ const QuestionCard: React.FC<{
             }
             className={`h-auto py-6 px-4 justify-start text-left whitespace-normal cursor-pointer ${
               showCorrectAnswer && answerLabels[index] === question.answer
-                ? "bg-green-600 hover:bg-green-700"
+                ? "bg-emerald-600 hover:bg-emerald-700"
                 : showCorrectAnswer &&
                     selectedAnswer === answerLabels[index] &&
                     selectedAnswer !== question.answer
@@ -137,7 +137,7 @@ export default function Quiz({
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       <main className="container mx-auto px-4 py-12 max-w-4xl">
         <h1 className="text-3xl font-bold mb-8 text-center text-foreground">
           {title}
