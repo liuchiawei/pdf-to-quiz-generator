@@ -180,10 +180,10 @@ export default function ChatWithFiles() {
             </motion.div>
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-2xl font-bold">
+            <CardTitle className="text-3xl text-emerald-800 dark:text-amber-200 uppercase font-black tracking-wide">
               PDF Quiz Generator
             </CardTitle>
-            <CardDescription className="text-base text-justify">
+            <CardDescription className="text-base text-justify text-stone-500 dark:text-stone-300">
               5MB以下のPDFをアップロードすると、その内容に基づいたインタラクティブなクイズを
               <Link href="https://sdk.vercel.ai/providers/ai-sdk-providers/google-generative-ai">
                 Claude 4 Sonnet
