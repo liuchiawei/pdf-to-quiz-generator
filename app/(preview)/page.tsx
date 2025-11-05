@@ -21,7 +21,13 @@ import { Link } from "@/components/ui/link";
 import { generateQuizTitle } from "./actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function ChatWithFiles() {
   const [files, setFiles] = useState<File[]>([]);
@@ -53,14 +59,14 @@ export default function ChatWithFiles() {
 
     if (isSafari && isDragging) {
       toast.error(
-        "Safari does not support drag & drop. Please use the file picker.",
+        "Safari does not support drag & drop. Please use the file picker."
       );
       return;
     }
 
     const selectedFiles = Array.from(e.target.files || []);
     const validFiles = selectedFiles.filter(
-      (file) => file.type === "application/pdf" && file.size <= 5 * 1024 * 1024,
+      (file) => file.type === "application/pdf" && file.size <= 5 * 1024 * 1024
     );
     console.log(validFiles);
 
@@ -87,35 +93,49 @@ export default function ChatWithFiles() {
         name: file.name,
         type: file.type,
         data: await encodeFileAsBase64(file),
-      })),
+      }))
     );
     submit({ files: encodedFiles, questionsLength });
     const generatedTitle = await generateQuizTitle(encodedFiles[0].name);
     setTitle(generatedTitle);
   };
 
+  console.log("partialQuestions", JSON.stringify(partialQuestions, null, 2));
+
   const clearPDF = () => {
     setFiles([]);
   };
-  
+
   // クイズの進行度を計算する
-  const progress = partialQuestions ? (partialQuestions.length / questionsLength) * 100 : 0;
+  const progress = partialQuestions
+    ? (partialQuestions.length / questionsLength) * 100
+    : 0;
 
   // 生成問題数チェック
-  const isQuestionsComplete = (partial: typeof partialQuestions): partial is z.infer<typeof questionsSchema> => {
-    return partial !== undefined && 
-           partial.length === questionsLength && 
-           partial.every(q => q && q.question && q.options && q.answer);
+  const isQuestionsComplete = (
+    partial: typeof partialQuestions
+  ): partial is z.infer<typeof questionsSchema> => {
+    return (
+      partial !== undefined &&
+      partial.length === questionsLength &&
+      partial.every((q) => q && q.question && q.options && q.answer)
+    );
   };
 
   // 問題数がユーザー選んだ数になったらクイズを表示
   if (isQuestionsComplete(partialQuestions)) {
-    return <Quiz title={title ?? "Quiz"} questions={partialQuestions} clearPDF={clearPDF} />;
+    return (
+      <Quiz
+        title={title ?? "Quiz"}
+        questions={partialQuestions}
+        clearPDF={clearPDF}
+      />
+    );
   }
 
   return (
     <div
-      className="h-full min-h-screen w-full flex justify-center items-center"
+      className="h-full min-h-screen w-full flex justify-center items-center text-foreground overflow-hidden"
       onDragOver={(e) => {
         e.preventDefault();
         setIsDragging(true);
@@ -147,31 +167,35 @@ export default function ChatWithFiles() {
           </motion.div>
         )}
       </AnimatePresence>
-      <Card className="w-full max-w-md h-full border-0 sm:border sm:h-fit mt-12">
+      <Card className="w-full max-w-md h-fit md:h-full border-none mt-12 bg-stone-50 dark:bg-emerald-800 shadow-xl">
         <CardHeader className="text-center space-y-6">
           <div className="mx-auto flex items-center justify-center space-x-2 text-muted-foreground">
-            <div className="rounded-full bg-primary/10 p-2">
-              <FileUp className="h-6 w-6" />
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 50, rotate: "45deg", scale: 0.5 }}
+              whileInView={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
+              transition={{ type: "spring" }}
+              className="rounded-full bg-emerald-500 dark:bg-emerald-700 text-amber-200 p-4 shadow-md"
+            >
+              <FileUp strokeWidth={1.4} className="size-8" />
+            </motion.div>
           </div>
           <div className="space-y-2">
             <CardTitle className="text-2xl font-bold">
               PDF Quiz Generator
             </CardTitle>
-            <CardDescription className="text-base">
-              Upload a PDF to generate an interactive quiz based on its content
-              using the <Link href="https://sdk.vercel.ai">Vercel AI SDK</Link> and{" "}
+            <CardDescription className="text-base text-justify">
+              5MB以下のPDFをアップロードすると、その内容に基づいたインタラクティブなクイズを
               <Link href="https://sdk.vercel.ai/providers/ai-sdk-providers/google-generative-ai">
                 Claude 4 Sonnet
-              </Link>
-              .
+              </Link>{" "}
+              を使用して生成します。
             </CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmitWithFiles} className="space-y-4">
             <div
-              className={`relative flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 transition-colors hover:border-muted-foreground/50`}
+              className={`relative flex flex-col items-center justify-center border border-dashed border-stone-400 rounded-lg p-6 transition-colors hover:bg-stone-200/70 dark:hover:bg-emerald-700/30`}
             >
               <input
                 title="Upload PDF"
@@ -180,7 +204,10 @@ export default function ChatWithFiles() {
                 accept="application/pdf"
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
-              <FileUp className="h-8 w-8 mb-2 text-muted-foreground" />
+              <FileUp
+                strokeWidth={1}
+                className="size-8 mb-2 text-muted-foreground"
+              />
               <p className="text-sm text-muted-foreground text-center">
                 {files.length > 0 ? (
                   <span className="font-medium text-foreground">
@@ -191,28 +218,37 @@ export default function ChatWithFiles() {
                 )}
               </p>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="questions-length">問題数</Label>
               {mounted ? (
-                <Select 
-                  value={questionsLength.toString()} 
-                  onValueChange={(value: string) => setQuestionsLength(parseInt(value))}
+                <Select
+                  value={questionsLength.toString()}
+                  onValueChange={(value: string) =>
+                    setQuestionsLength(parseInt(value))
+                  }
                 >
-                  <SelectTrigger id="questions-length">
+                  <SelectTrigger
+                    id="questions-length"
+                    className="border-stone-400 dark:border-stone-400/50"
+                  >
                     <SelectValue placeholder="問題数を選択" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="3">3 問</SelectItem>
-                    <SelectItem value="4">4 問</SelectItem>
-                    <SelectItem value="5">5 問</SelectItem>
-                    <SelectItem value="6">6 問</SelectItem>
-                    <SelectItem value="8">8 問</SelectItem>
-                    <SelectItem value="10">10 問</SelectItem>
+                  <SelectContent className="bg-stone-50 dark:bg-emerald-900">
+                    <SelectItem
+                      value="3"
+                      className="hover:bg-stone-200 dark:hover:bg-emerald-950"
+                    >
+                      4 問
+                    </SelectItem>
+                    <SelectItem value="5" className="hover:bg-stone-200 dark:hover:bg-emerald-950">5 問</SelectItem>
+                    <SelectItem value="6" className="hover:bg-stone-200 dark:hover:bg-emerald-950">6 問</SelectItem>
+                    <SelectItem value="8" className="hover:bg-stone-200 dark:hover:bg-emerald-950">8 問</SelectItem>
+                    <SelectItem value="10" className="hover:bg-stone-200 dark:hover:bg-emerald-950">10 問</SelectItem>
                   </SelectContent>
                 </Select>
               ) : (
-                <div className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm">
+                <div className="flex h-9 w-full items-center justify-between rounded-md bg-transparent px-3 py-2 text-sm">
                   {questionsLength} 問
                 </div>
               )}
@@ -220,16 +256,19 @@ export default function ChatWithFiles() {
 
             <Button
               type="submit"
-              className={`w-full ${mounted && isLoading ? "animate-pulse" : ""}`}
+              className={`w-full cursor-pointer ${
+                mounted && isLoading ? "animate-pulse" : ""
+              }`}
               disabled={files.length === 0}
+              size="lg"
             >
               {isLoading ? (
                 <span className="flex items-center space-x-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Generating Quiz...</span>
+                  <span>クイズを生成中...</span>
                 </span>
               ) : (
-                "Generate Quiz"
+                "クイズを生成"
               )}
             </Button>
           </form>
@@ -252,7 +291,9 @@ export default function ChatWithFiles() {
                 />
                 <span className="text-muted-foreground text-center col-span-4 sm:col-span-2">
                   {partialQuestions
-                    ? `Generating question ${partialQuestions.length + 1} of ${questionsLength}`
+                    ? `Generating question ${
+                        partialQuestions.length + 1
+                      } of ${questionsLength}`
                     : "Analyzing PDF content"}
                 </span>
               </div>
