@@ -228,20 +228,27 @@ export default function ChatWithFiles() {
                     setQuestionsLength(parseInt(value))
                   }
                 >
-                  <SelectTrigger id="questions-length">
+                  <SelectTrigger
+                    id="questions-length"
+                    className="border-stone-400 dark:border-stone-400/50"
+                  >
                     <SelectValue placeholder="問題数を選択" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="3">3 問</SelectItem>
-                    <SelectItem value="4">4 問</SelectItem>
-                    <SelectItem value="5">5 問</SelectItem>
-                    <SelectItem value="6">6 問</SelectItem>
-                    <SelectItem value="8">8 問</SelectItem>
-                    <SelectItem value="10">10 問</SelectItem>
+                  <SelectContent className="bg-stone-50 dark:bg-emerald-900">
+                    <SelectItem
+                      value="3"
+                      className="hover:bg-stone-200 dark:hover:bg-emerald-950"
+                    >
+                      4 問
+                    </SelectItem>
+                    <SelectItem value="5" className="hover:bg-stone-200 dark:hover:bg-emerald-950">5 問</SelectItem>
+                    <SelectItem value="6" className="hover:bg-stone-200 dark:hover:bg-emerald-950">6 問</SelectItem>
+                    <SelectItem value="8" className="hover:bg-stone-200 dark:hover:bg-emerald-950">8 問</SelectItem>
+                    <SelectItem value="10" className="hover:bg-stone-200 dark:hover:bg-emerald-950">10 問</SelectItem>
                   </SelectContent>
                 </Select>
               ) : (
-                <div className="flex h-9 w-full items-center justify-between rounded-md border border-input bg-transparent px-3 py-2 text-sm">
+                <div className="flex h-9 w-full items-center justify-between rounded-md bg-transparent px-3 py-2 text-sm">
                   {questionsLength} 問
                 </div>
               )}
