@@ -18,9 +18,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${geist.className}`}>
+    <html lang="ja" suppressHydrationWarning className={`${geist.className}`}>
       <body>
-        <ThemeProvider attribute="class" enableSystem forcedTheme="dark">
+        <ThemeProvider attribute="class" enableSystem>
           <Toaster position="top-center" richColors />
           {children}
         </ThemeProvider>

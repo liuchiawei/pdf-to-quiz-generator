@@ -22,6 +22,7 @@ import { generateQuizTitle } from "./actions";
 import { AnimatePresence, motion } from "framer-motion";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ThemeToggle } from "@/components/themeToggle";
 
 export default function ChatWithFiles() {
   const [files, setFiles] = useState<File[]>([]);
@@ -115,7 +116,7 @@ export default function ChatWithFiles() {
 
   return (
     <div
-      className="h-full min-h-screen w-full flex justify-center items-center"
+      className="h-full min-h-screen w-full flex justify-center items-center bg-background text-foreground"
       onDragOver={(e) => {
         e.preventDefault();
         setIsDragging(true);
@@ -260,6 +261,7 @@ export default function ChatWithFiles() {
           </CardFooter>
         )}
       </Card>
+      <ThemeToggle className="absolute top-4 right-4 cursor-pointer" />
     </div>
   );
 }
